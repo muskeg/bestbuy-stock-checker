@@ -1,0 +1,22 @@
+---
+# Your postal code (no spaces), for nearby stores status
+postal_code: "H0H0H0"
+
+slack:
+  # Slack Incoming Webhook (https://api.slack.com/messaging/webhooks)
+  webhook_url: "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+best_buy:
+  # The products SKUs. You can find them shown as "Web Code" on the product's page
+  # Add your own description for the product
+  # (Slack's markdown supported: https://api.slack.com/reference/surfaces/formatting)
+  skus_list:
+    item1:
+      desc: "*Big-arse TV* :tv:"
+      sku: "14471417"
+    item2:
+      desc: "*Karaoke system* :microphone:"
+      sku: "12893288"
+    item3:
+      desc: "*Hello Kitty eau de toilette* :scream_cat::toilet:"
+      sku: "12920503"
