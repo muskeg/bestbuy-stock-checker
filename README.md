@@ -42,6 +42,7 @@ That section only contains the url to your incoming message webhook. You can eas
 
 ### Best Buy
 That section contain a list of items with your own description and the items' [SKUs](https://en.wikipedia.org/wiki/Stock_keeping_unit). Since we're using Slack's messaging, the description value supports markdown formatting. Refer to Slacks messages formatting documentation for more information: https://api.slack.com/reference/surfaces/formatting
+
 The list can contain any number of items but keep in mind that every item requires 2 API calls, proportionally increasing execution time.
 
 ## Usage
