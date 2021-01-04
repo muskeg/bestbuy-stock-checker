@@ -8,7 +8,7 @@ The script looks availabilities both online and for pick-up in stores
 nearby a specified postal code.
 It then sends a notification to Slack using an Incoming Webhook.
 
-All variables defined in the main function
+Adjust the stock_check.yml file according to your needs
 """
 
 import sys
