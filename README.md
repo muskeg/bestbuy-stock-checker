@@ -59,6 +59,6 @@ optional arguments:
                         Path to config file
 ```
 ## TO-DO
-* Currently the robot sends a message at every execution. I'm planning to add a flag to send message only when an item is purchasable. 
+* ~~Currently the robot sends a message at every execution. I'm planning to add a flag to send message only when an item is purchasable.~~ Alert mode added to address that. 
 * Add a "no Slack" flag to skip sending the message to Slack and instead just print to console
 
