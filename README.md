@@ -57,6 +57,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -c CONFIG, --config CONFIG
                         Path to config file
+  -a, --alert           Alert mode; Send notification only if in stock or
+                        preorder
 ```
 ## TO-DO
 * ~~Currently the robot sends a message at every execution. I'm planning to add a flag to send message only when an item is purchasable.~~ Alert mode added to address that. 
