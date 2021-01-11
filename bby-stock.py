@@ -26,9 +26,9 @@ def price_lookup(sku, bbyca_offers_api_root, bbyca_offers_api_suffix, headers):
     price_result = json.loads(price_request.content)
     price = "$" + str(price_result[0]['salePrice'])
     if price_result[0]['isPreorderable']:
-        preorder_status = "(:date: Preorder!)"
+        preorder_status = True
     else:
-        preorder_status = ""
+        preorder_status = False
     return price, preorder_status
 
 # Lookup availabilities
@@ -37,16 +37,25 @@ def availability_lookup(bbyca_api, data_sku, headers):
     if '200' in str(r):
         result = json.loads(r.content)
         if result['availabilities'][0]['shipping']['purchasable']:
-            purchasable_status = ">:money_with_wings:"
+            purchasable_status = True
         else:
-            purchasable_status = ">:red_circle:"
+            purchasable_status = False
     else:
         print(r.content)
     return purchasable_status, result
 
 # Build Slack message
 def build_slack_message(slack_message, desc, purchasable_status, preorder_status, availability, price):
-    slack_message_text = purchasable_status + "  " + desc + " - " + price + " " + preorder_status + "\n>*Shipping*: " + re.sub( r"([A-Z])", r" \1", availability['availabilities'][0]['shipping']['status']) + " \n>*Pick-up*: " + re.sub( r"([A-Z])", r" \1", availability['availabilities'][0]['pickup']['status'])
+    if purchasable_status:
+        purchasable_icon = ":money_with_wings:"
+    else:
+        purchasable_icon = ":red_circle:"
+    
+    if preorder_status:
+        preorder_message = "(:date: Preorder!)"
+    else:
+        preorder_message = ""
+    slack_message_text = ">" + purchasable_icon + "  " + desc + " - " + price + " " + preorder_message + "\n>*Shipping*: " + re.sub( r"([A-Z])", r" \1", availability['availabilities'][0]['shipping']['status']) + " \n>*Pick-up*: " + re.sub( r"([A-Z])", r" \1", availability['availabilities'][0]['pickup']['status'])
     print(slack_message_text)
     slack_message['blocks'].append({
         "type": "section",
@@ -82,6 +91,7 @@ def main():
         help="Path to config file", 
         default=Path(__file__).absolute().parent / "stock_check.yml"
     )
+    parser.add_argument('-a', '--alert', help="Alert mode; Send notification only if in stock or preorder", action="store_true")
     args = parser.parse_args()
     #print(args.config)
 
@@ -119,6 +129,7 @@ def main():
         ]
     }
 
+    send_notification = False
     for key, sku in config['best_buy']['skus_list'].items():
         data_sku = {
             'postalCode': postal_code,
@@ -127,8 +138,14 @@ def main():
         purchasable_status, availability = availability_lookup(bbyca_api, data_sku, headers)
         price, preorder_status = price_lookup(sku['sku'], bbyca_offers_api_root, bbyca_offers_api_suffix, headers)
         slack_message = build_slack_message(slack_message, sku['desc'], purchasable_status, preorder_status, availability, price)
-    
-    post_slack_message(slack_message, webhook_url)
+        if purchasable_status or preorder_status:
+            send_notification = True
+
+    if args.alert:
+        if send_notification:
+            post_slack_message(slack_message, webhook_url)
+    else:
+        post_slack_message(slack_message, webhook_url)
 
 if __name__ == "__main__":
     main()
